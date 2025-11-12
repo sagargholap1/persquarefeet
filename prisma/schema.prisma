@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Rate {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  pincode         String
+  location        String
+  propertyType    String
+  avgRatePerSqft  Float
+  minRatePerSqft  Float
+  maxRatePerSqft  Float
+  lastUpdated     DateTime @default(now())
+}
