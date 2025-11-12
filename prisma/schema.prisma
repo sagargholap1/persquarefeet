@@ -8,7 +8,8 @@ datasource db {
 }
 
 model Rate {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  // id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  id              String   @id @map("_id")
   pincode         String
   location        String
   propertyType    String
@@ -17,3 +18,5 @@ model Rate {
   maxRatePerSqft  Float
   lastUpdated     DateTime @default(now())
 }
+
+ 
