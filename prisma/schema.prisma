@@ -5,11 +5,10 @@ generator client {
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
-}
+} 
 
 model Rate {
-  // id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  id              String   @id @map("_id")
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
   pincode         String
   location        String
   propertyType    String
