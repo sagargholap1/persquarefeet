@@ -1,32 +1,43 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { getPincodeFromCoords } from "@/lib/geocode";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const pincode = searchParams.get("pincode");
-  const propertyType = searchParams.get("type") || "Residential";
-  const lat = searchParams.get("lat");
-  const lon = searchParams.get("lon");
+  try {
+    const { searchParams } = new URL(req.url);
+    const pincode = searchParams.get("pincode");
+    const lat = searchParams.get("lat");
+    const lon = searchParams.get("lon");
+    const type = searchParams.get("type");
 
-  let finalPincode = pincode;
-  let location = null;
+    let finalPincode = pincode;
 
-  if (lat && lon) {
-    const geo = await getPincodeFromCoords(Number(lat), Number(lon));
-    finalPincode = geo.pincode;
-    location = geo.location;
+    // ✅ If no pincode, try to reverse-geocode from lat/lon
+    if (!finalPincode && lat && lon) {
+      const { getPincodeFromCoords } = await import("@/lib/getPincodeFromCoords");
+      finalPincode = await getPincodeFromCoords(Number(lat), Number(lon));
+    }
+
+    // ✅ Validate inputs before Prisma query
+    if (!finalPincode || !type) {
+      return Response.json({ message: "Missing pincode or property type" }, { status: 400 });
+    }
+
+    const rate = await prisma.rate.findFirst({
+      where: {
+        pincode: finalPincode,
+        propertyType: type,
+      },
+    });
+
+    if (!rate) {
+      return Response.json({ message: "No data found for this location" });
+    }
+
+    return Response.json(rate);
+  } catch (error: any) {
+    console.error("API error:", error);
+    return Response.json({ message: "Internal Server Error", error: error.message }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
-
-  if (!finalPincode)
-    return NextResponse.json({ error: "No pincode or coordinates provided" }, { status: 400 });
-
-  const rate = await prisma.rate.findFirst({
-    where: { pincode: finalPincode, propertyType },
-  });
-
-  if (!rate)
-    return NextResponse.json({ message: "No data found for this area." });
-
-  return NextResponse.json({ ...rate, location });
 }
