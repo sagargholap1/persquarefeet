@@ -13,6 +13,7 @@ export default function Home() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -43,38 +44,59 @@ export default function Home() {
           className="object-cover object-center"
         />
 
-        <div className="absolute top-0 left-0 w-full z-50 bg-white backdrop-blur-md py-4 px-6 ">
-          <div className="max-w-7xl mx-auto   flex items-center justify-between">
-            {/* Logo */}
-            <Image src={logo} alt="logo" className="w-[150px]" />
+        <div className="absolute top-0 left-0 w-full z-50 bg-white backdrop-blur-md py-4 px-6">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <Image src={logo} alt="logo" className="w-[150px]" />
 
-            {/* Links for desktop */}
-            <div className="hidden md:flex gap-8 text-xl text-gray-700 font-medium">
-              <a href="#home" className="hover:text-[#f93114] transition">
-                Home
-              </a>
-              <a href="#about" className="hover:text-[#f93114] transition">
-                Cities
-              </a>
-              <a href="#contact" className="hover:text-[#f93114] transition">
-                Calculate Rate
-              </a>
-            </div>
-
-            {/* Right side icons (mobile + help) */}
-    <div className="flex items-center gap-4">
-      {/* Help Icon */}
-      <button className="text-gray-700 hover:text-amber-500 transition">
-       <HelpCircle/>
-      </button>
-
-      {/* Hamburger menu for mobile */}
-      <button className="md:hidden text-gray-700">
-        <MenuIcon/>
-      </button>
-    </div>
-          </div>
+        {/* Links for desktop */}
+        <div className="hidden md:flex gap-8 text-xl text-gray-700 font-medium">
+          <a href="#home" className="hover:text-[#f93114] transition">
+            Home
+          </a>
+          <a href="#about" className="hover:text-[#f93114] transition">
+            Cities
+          </a>
+          <a href="#contact" className="hover:text-[#f93114] transition">
+            Calculate Rate
+          </a>
         </div>
+
+        {/* Right side icons */}
+        <div className="flex items-center gap-4">
+          {/* Help Icon */}
+          <button className="text-gray-700 hover:text-amber-500 transition">
+            <HelpCircle size={24} />
+          </button>
+
+          {/* Hamburger menu for mobile */}
+          <button
+            className="md:hidden text-gray-700"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <MenuIcon size={24} />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden mt-2 flex flex-col gap-2 bg-white rounded-lg p-4">
+          <a href="#home" className="text-gray-700 hover:text-[#f93114] transition">
+            Home
+          </a>
+          <a href="#about" className="text-gray-700 hover:text-[#f93114] transition">
+            Cities
+          </a>
+          <a
+            href="#contact"
+            className="text-gray-700 hover:text-[#f93114] transition"
+          >
+            Calculate Rate
+          </a>
+        </div>
+      )}
+    </div>
 
         {/* Overlays */}
         <div className="absolute inset-0 bg-amber-500/20 mix-blend-multiply" />
