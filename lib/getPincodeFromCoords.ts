@@ -1,5 +1,5 @@
 export async function getPincodeFromCoords(lat: number, lon: number) {
-  const apiKey = process.env.OPENCAGE_API_KEY!;
+  const apiKey = process.env.GEOCODE_API_KEY!;
   const res = await fetch(
     `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`
   );
