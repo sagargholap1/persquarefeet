@@ -13,6 +13,7 @@ export async function GET(req: Request) {
 
     // ✅ If no pincode, try to reverse-geocode from lat/lon
     if (!finalPincode && lat && lon) {
+        console.log("Calling OpenCage API with:", lat, lon); // ✅ Add this line
       const { getPincodeFromCoords } = await import("@/lib/getPincodeFromCoords");
       finalPincode = await getPincodeFromCoords(Number(lat), Number(lon));
     }
