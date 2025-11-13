@@ -5,6 +5,7 @@ import SearchForm from "@/components/SearchForm";
 import RateCard from "@/components/RateCard";
 import Image from "next/image";
 import logo from "@/public/logo.jpeg"
+import { getUserLocation } from "@/utils/getLocation";
 
 
 export default function Home() {
@@ -12,29 +13,21 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setError("Geolocation not supported");
+ useEffect(() => {
+  setLoading(true);
+  getUserLocation()
+    .then(async ({ lat, lon }) => {
+      const res = await fetch(`/api/rate?lat=${lat}&lon=${lon}&type=Residential`);
+      const result = await res.json();
+      setData(result);
       setLoading(false);
-      return;
-    }
+    })
+    .catch((err) => {
+      setError(err);
+      setLoading(false);
+    });
+}, []);
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        const res = await fetch(
-          `/api/rate?lat=${latitude}&lon=${longitude}&type=Residential`
-        );
-        const result = await res.json();
-        setData(result);
-        setLoading(false);
-      },
-      () => {
-        setError("Location access denied");
-        setLoading(false);
-      }
-    );
-  }, []);
 
   return (
     <main className="min-h-screen flex flex-col gap-10 items-center justify-center  p-6">
